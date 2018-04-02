@@ -1,0 +1,50 @@
+item {
+                id: 1
+                name: 'dog'
+              }
+
+item {
+                id: 2
+                name: 'hawk'
+              }
+
+item {
+                id: 3
+                name: 'sage_grouse'
+              }
+
+item {
+                id: 4
+                name: 'cow'
+              }
+
+item {
+                id: 5
+                name: 'badger'
+              }
+
+item {
+                id: 1
+                name: 'n02084071'
+              }
+
+item {
+                id: 2
+                name: 'n01605630'
+              }
+
+item {
+                id: 3
+                name: 'n01797601'
+              }
+
+item {
+                id: 4
+                name: 'n01887787'
+              }
+
+item {
+                id: 5
+                name: 'n02447366'
+              }
+

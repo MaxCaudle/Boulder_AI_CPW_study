@@ -4,6 +4,11 @@
     in a Jupy and what not. I also don't need to print the images, so fuck that
 
     I did add the terrible terrible make_df_with_classes and make_dicts functions
+    ok, i actually made a fair number of things in this bad boy. Namely, the
+    ones that make it a genuine bad boy: make_matrix, make_precesion, and
+    compare_thresholds
+
+    wheeeeeeee
 '''
 
 

@@ -1,10 +1,21 @@
+'''
+    this is just fully stolen from the object_detection_tutorial notebook.
+    I made some functions where they just had a script, what with them having it
+    in a Jupy and what not. I also don't need to print the images, so fuck that
+
+    I did add the terrible terrible make_df_with_classes and make_dicts functions
+'''
+
+
 import numpy as np
+import pandas as pd
 import os
 import six.moves.urllib as urllib
 import sys
 import tarfile
 import tensorflow as tf
 import zipfile
+import pickle
 
 from collections import defaultdict
 from io import StringIO
@@ -16,33 +27,44 @@ from models.research.object_detection.utils import label_map_util
 from models.research.object_detection.utils import visualization_utils as vis_util
 
 
-PATH_TO_CKPT = 'inference_graph/frozen_inference_graph.pb'
-NUM_CLASSES = 5
+def make_category_index(LABEL_MAP, NUM_CLASSES):
+    label_map = label_map_util.load_labelmap(LABEL_MAP)
+    categories = label_map_util.convert_label_map_to_categories(label_map,
+                                                        max_num_classes=NUM_CLASSES,
+                                                        use_display_name=True)
+    category_index = label_map_util.create_category_index(categories)
 
-detection_graph = tf.Graph()
-with detection_graph.as_default():
-  od_graph_def = tf.GraphDef()
-  with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
-    serialized_graph = fid.read()
-    od_graph_def.ParseFromString(serialized_graph)
-    tf.import_graph_def(od_graph_def, name='')
+    return category_index
 
-label_map = label_map_util.load_labelmap('object-detection.pbtxt')
-categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
-category_index = label_map_util.create_category_index(categories)
 
-PATH_TO_TEST_IMAGES_DIR = 'test_images'
-TEST_IMAGE_PATHS = []
-for file in os.listdir(PATH_TO_TEST_IMAGES_DIR):
-    if file[-4:] == '.jpg':
-        TEST_IMAGE_PATHS.append(os.path.join(PATH_TO_TEST_IMAGES_DIR, file))
-# Size, in inches, of the output images.
-IMAGE_SIZE = (12, 8)
+def idk_things_are_supposed_to_be_in_functions_i_guess_also_why_are_we_yelling(
+                                        PATH_TO_CKPT,
+                                        NUM_CLASSES,
+                                        LABEL_MAP):
+
+    detection_graph = tf.Graph()
+    with detection_graph.as_default():
+      od_graph_def = tf.GraphDef()
+      with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+        serialized_graph = fid.read()
+        od_graph_def.ParseFromString(serialized_graph)
+        tf.import_graph_def(od_graph_def, name='')
+
+    category_index = make_category_index(LABEL_MAP, NUM_CLASSES)
+
+    PATH_TO_TEST_IMAGES_DIR = 'test_images'
+    TEST_IMAGE_PATHS = []
+    for file in os.listdir(PATH_TO_TEST_IMAGES_DIR):
+        if file[-4:] == '.jpg':
+            TEST_IMAGE_PATHS.append(os.path.join(PATH_TO_TEST_IMAGES_DIR, file))
+    return TEST_IMAGE_PATHS, detection_graph, category_index
+
 
 def load_image_into_numpy_array(image):
   (im_width, im_height) = image.size
   return np.array(image.getdata()).reshape(
       (im_height, im_width, 3)).astype(np.uint8)
+
 
 def run_inference_for_single_image(image, graph):
   with graph.as_default():
@@ -90,7 +112,8 @@ def run_inference_for_single_image(image, graph):
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
   return output_dict
 
-for image_path in TEST_IMAGE_PATHS:
+
+def print_image(image_path, IMAGE_SIZE, detection_graph, category_index):
   image = Image.open(image_path)
   # the array based representation of the image will be used later in order to prepare the
   # result image with boxes and labels on it.
@@ -109,5 +132,63 @@ for image_path in TEST_IMAGE_PATHS:
       instance_masks=output_dict.get('detection_masks'),
       use_normalized_coordinates=True,
       line_thickness=8)
+  # IMAGE_SIZE == tuple | Size, in inches, of the output images.
   plt.figure(figsize=IMAGE_SIZE)
   plt.imshow(image_np)
+
+
+def make_df_with_classes(dicts, category_index, threshold):
+    df = pd.DataFrame(columns=['image_paths', 'detections'])
+
+    for image_dict in dicts:
+        image_path = image_dict[0]
+        scores = image_dict[1]['detection_scores']
+        classes = image_dict[1]['detection_classes']
+
+        keeper_indices = np.argwhere(scores.astype(float) > threshold)
+        keeper_classes = classes[keeper_indices].ravel().tolist()
+        print(image_path)
+        print('keeper_classes: ', keeper_classes)
+        df = df.append({'image_paths': image_path, 'detections': keeper_classes}, ignore_index=True, )
+
+    print(df.head())
+    return df
+
+
+def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
+    if not os.path.isfile('detected_dicts.pkl'):
+        TEST_IMAGE_PATHS, detection_graph, category_index = \
+        idk_things_are_supposed_to_be_in_functions_i_guess_also_why_are_we_yelling(
+                                        PATH_TO_CKPT,
+                                        NUM_CLASSES,
+                                        LABEL_MAP)
+        dicts = []
+        for image_path in TEST_IMAGE_PATHS:
+            image = Image.open(image_path)
+            image_np = load_image_into_numpy_array(image)
+            image_np_expanded = np.expand_dims(image_np, axis=0)
+            dicts.append((image_path, run_inference_for_single_image(image, detection_graph)))
+
+        with open('detected_dicts.pkl', 'wb') as f:
+            pickle.dump(dicts, f)
+
+    else:
+        category_index = make_category_index(LABEL_MAP, NUM_CLASSES)
+        with open('detected_dicts.pkl', 'rb') as f:
+            dicts = pickle.load(f)
+
+    return dicts, category_index
+
+
+def test_df_accuracy(df, df_pred):
+    pass
+
+
+if __name__ == '__main__':
+    dicts, category_index = make_dicts(PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
+         NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt')
+    df = make_df_with_classes(dicts, category_index, 0.9)
+
+    # if you want to print your images out...
+    # for image_path in TEST_IMAGE_PATHS:
+    #     print_image(image_path, (12,8), detection_graph, category_index)

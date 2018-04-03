@@ -38,6 +38,7 @@ def make_category_index(LABEL_MAP, NUM_CLASSES):
 
 
 def idk_things_are_supposed_to_be_in_functions_i_guess_also_why_are_we_yelling(
+                                        test_images,
                                         PATH_TO_CKPT,
                                         NUM_CLASSES,
                                         LABEL_MAP):
@@ -52,11 +53,10 @@ def idk_things_are_supposed_to_be_in_functions_i_guess_also_why_are_we_yelling(
 
     category_index = make_category_index(LABEL_MAP, NUM_CLASSES)
 
-    PATH_TO_TEST_IMAGES_DIR = 'test_images'
+    PATH_TO_TEST_IMAGES_DIR = test_images
     TEST_IMAGE_PATHS = []
     for file in os.listdir(PATH_TO_TEST_IMAGES_DIR):
-        if file[-4:] == '.jpg':
-            TEST_IMAGE_PATHS.append(os.path.join(PATH_TO_TEST_IMAGES_DIR, file))
+        TEST_IMAGE_PATHS.append(os.path.join(PATH_TO_TEST_IMAGES_DIR, file))
     return TEST_IMAGE_PATHS, detection_graph, category_index
 
 
@@ -137,10 +137,12 @@ def print_image(image_path, IMAGE_SIZE, detection_graph, category_index):
   plt.imshow(image_np)
 
 
-def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
-    if not os.path.isfile('detected_dicts.pkl'):
+def make_dicts(test_images,PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP, new_dict = False):
+    if new_dict:
+
         TEST_IMAGE_PATHS, detection_graph, category_index = \
         idk_things_are_supposed_to_be_in_functions_i_guess_also_why_are_we_yelling(
+                                        test_images,
                                         PATH_TO_CKPT,
                                         NUM_CLASSES,
                                         LABEL_MAP)
@@ -150,7 +152,6 @@ def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
             image_np = load_image_into_numpy_array(image)
             image_np_expanded = np.expand_dims(image_np, axis=0)
             dicts.append((image_path, run_inference_for_single_image(image, detection_graph)))
-
         with open('detected_dicts.pkl', 'wb') as f:
             pickle.dump(dicts, f)
 
@@ -163,7 +164,7 @@ def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
 
 
 def make_df_with_classes(dicts, category_index, threshold):
-    df = pd.DataFrame(columns=['image_paths', 'detections'])
+    df = pd.DataFrame(columns=['image_path', 'detections'])
 
     for image_dict in dicts:
         image_path = image_dict[0]
@@ -173,23 +174,55 @@ def make_df_with_classes(dicts, category_index, threshold):
         keeper_indices = np.argwhere(scores.astype(float) > threshold)
         keeper_classes_int = classes[keeper_indices].ravel().tolist()
         keeper_classes = [category_index[x]['name'] for x in keeper_classes_int]
-        df = df.append({'image_paths': image_path, 'detections': keeper_classes}, ignore_index=True, )
+        df = df.append({'image_path': image_path, 'detections': keeper_classes}, ignore_index=True)
 
     return df
 
 
 def test_df_accuracy(path_to_df, df_pred):
     test_df = pd.read_csv(path_to_df)
-    test_df['filepath'] = 'image_annotations/' + test_df['FileName']
-    comparison_df = test_df.join(df_pred)
+    test_df = test_df[test_df['CommonName'] != 'Setup'][test_df['ObsID'] == 2][['FileName', 'CommonName']]
+    test_df['CommonName'] = test_df['CommonName'].str.lower()
+    test_df['CommonName'].replace(['none', 'false trigger'], ['none','none'], inplace = True)
+    test_df['image_path'] = 'image_annotations/images/' + test_df['FileName']
 
+    comparison_df = test_df.join(df_pred.set_index('image_path'),
+                                 on='image_path')
+    comparison_df.dropna(inplace = True)
+    comparison_df['tp'] = comparison_df.apply(lambda row:
+                                              int(row.CommonName in
+                                                  row.detections),
+                                              axis=1)
+    comparison_df['fp'] = comparison_df.apply(lambda row:
+                                              int(len(row.detections) -
+                                                      row.tp),
+                                              axis=1)
+    comparison_df['fn'] = comparison_df.apply(lambda row:
+                                              int(
+                                              (row.CommonName not in
+                                               row.detections)
+                                               &
+                                               (row.CommonName != 'none')),
+                                              axis=1)
+    comparison_df['tn'] = comparison_df.apply(lambda row:
+                                             int((row.CommonName == 'none')
+                                              & len(row.detections)==0), axis=1)
 
+    return comparison_df
+
+def compare_thresholds(dicts, category_index, path_to_df, df_pred, range_object):
+    accuracy = -1
+
+    for threshold in range_object:
+        pass
 if __name__ == '__main__':
-    dicts, category_index = make_dicts(PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
-         NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt')
+    dicts, category_index = make_dicts(test_images='image_annotations/images/',
+                   PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
+         NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt', new_dict=False)
 
     df = make_df_with_classes(dicts, category_index, 0.9)
-    test_df_accuracy('test_csv/kb_photos.csv', df)
+    comparison_df = test_df_accuracy('test_csv/kb_photos.csv', df)
+
     # if you want to print your images out...
     # for image_path in TEST_IMAGE_PATHS:
     #     print_image(image_path, (12,8), detection_graph, category_index)

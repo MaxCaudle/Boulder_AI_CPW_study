@@ -179,7 +179,7 @@ def make_df_with_classes(dicts, category_index, threshold):
     return df
 
 
-def test_df_accuracy(path_to_df, df_pred):
+def make_matrix(path_to_df, df_pred):
     test_df = pd.read_csv(path_to_df)
     test_df = test_df[test_df['CommonName'] != 'Setup'][test_df['ObsID'] == 2][['FileName', 'CommonName']]
     test_df['CommonName'] = test_df['CommonName'].str.lower()
@@ -207,21 +207,40 @@ def test_df_accuracy(path_to_df, df_pred):
     comparison_df['tn'] = comparison_df.apply(lambda row:
                                              int((row.CommonName == 'none')
                                               & len(row.detections)==0), axis=1)
-
     return comparison_df
 
-def compare_thresholds(dicts, category_index, path_to_df, df_pred, range_object):
-    accuracy = -1
+
+def make_precesion(comparison_df):
+    TP = sum(comparison_df['tp'])
+    FP = sum(comparison_df['fp'])
+    return TP / (TP + FP)
+
+
+def compare_thresholds(dicts, category_index, path_to_df, range_object):
+    precision = -1
+    best_threshold = 0
+    keeper_df = None
 
     for threshold in range_object:
-        pass
+        df = make_df_with_classes(dicts, category_index, threshold)
+        comparison_df = make_matrix(path_to_df, df)
+        this_precision = make_precesion(comparison_df)
+        if this_precision > precision:
+            best_threshold = threshold
+            precision = this_precision
+            keeper_df = comparison_df
+
+    return precision, best_threshold, keeper_df
+
 if __name__ == '__main__':
     dicts, category_index = make_dicts(test_images='image_annotations/images/',
                    PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
          NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt', new_dict=False)
 
-    df = make_df_with_classes(dicts, category_index, 0.9)
-    comparison_df = test_df_accuracy('test_csv/kb_photos.csv', df)
+    precision, best_threshold, keeper_df = compare_thresholds(dicts,
+                                                    category_index,
+                                                    'test_csv/kb_photos.csv',
+                                                    range(0,1,10))
 
     # if you want to print your images out...
     # for image_path in TEST_IMAGE_PATHS:

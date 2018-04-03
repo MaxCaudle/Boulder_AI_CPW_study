@@ -10,7 +10,7 @@ Due Date | What is Due
 3/30 | - [x] Have a pipeline to feed the test data through
 3/31 | Girlfriend OOT Do all the work <br>-[x] get a model trained on a subset of the data, try a test too (local)
 4/1 | Girlfriend OOT Do all the work <br>-[ ] Get the training data loaded - still waiting for some data<br> - [/] Make sure the model is giving me what I need
-4/2 | - [ ] WIGGLE ROOM <br>- [ ] MVP Model due <br>- [ ] Start training the model (AWS)
+4/2 | - [ ] WIGGLE ROOM <br>- [x] MVP Model due <br>- [ ] Start training the model (AWS)
 4/3 | - [ ] Check model's performance <br> - [ ] Run data through YOLO to compare
 4/4 | - [ ] Tweak the model <br> - [ ] Consider a second model for the birdies
 4/5 | Begin working on the Extras <br> - [ ] simulate running model on one of the cameras GPU <br> - [ ] Work on gender counts (this might be an additional model too)

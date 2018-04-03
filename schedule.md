@@ -9,10 +9,10 @@ Due Date | What is Due
 3/29 | - [x] Start building a model<br>- [x] Follow up for training data <br>- [x] Load test to an S3 bucket (upload speed dependent)
 3/30 | - [x] Have a pipeline to feed the test data through
 3/31 | Girlfriend OOT Do all the work <br>-[x] get a model trained on a subset of the data, try a test too (local)
-4/1 | Girlfriend OOT Do all the work <br>-[ ] Get the training data loaded - still waiting for some data<br> - [/] Make sure the model is giving me what I need
+4/1 | Girlfriend OOT Do all the work <br>-[ ] Get the training data loaded - still waiting for some data<br> - [x] Make sure the model is giving me what I need
 4/2 | - [x] WIGGLE ROOM <br>- [x] MVP Model due <br>- [/] Start training the model (AWS)
-4/3 | - [ ] Check model's performance
-4/4 | - [ ] Tweak the model <br> - [ ] Consider a second model for the birdies
+4/3 | - [/] Check model's performance
+4/4 | - [/] Tweak the model
 4/5 | Begin working on the Extras <br> - [ ] simulate running model on one of the cameras GPU <br> - [ ] Work on gender counts (this might be an additional model too)
 4/6 | - [ ] Work on gender counts (this might be an additional model too) <br> - [ ] Get counts of all the animals from a finished basic model
 4/7 | - [ ] Any biological coding, e.g. estimating pack size

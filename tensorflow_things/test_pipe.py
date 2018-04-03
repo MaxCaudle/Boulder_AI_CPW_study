@@ -137,24 +137,6 @@ def print_image(image_path, IMAGE_SIZE, detection_graph, category_index):
   plt.imshow(image_np)
 
 
-def make_df_with_classes(dicts, category_index, threshold):
-    df = pd.DataFrame(columns=['image_paths', 'detections'])
-
-    for image_dict in dicts:
-        image_path = image_dict[0]
-        scores = image_dict[1]['detection_scores']
-        classes = image_dict[1]['detection_classes']
-
-        keeper_indices = np.argwhere(scores.astype(float) > threshold)
-        keeper_classes = classes[keeper_indices].ravel().tolist()
-        print(image_path)
-        print('keeper_classes: ', keeper_classes)
-        df = df.append({'image_paths': image_path, 'detections': keeper_classes}, ignore_index=True, )
-
-    print(df.head())
-    return df
-
-
 def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
     if not os.path.isfile('detected_dicts.pkl'):
         TEST_IMAGE_PATHS, detection_graph, category_index = \
@@ -180,15 +162,34 @@ def make_dicts(PATH_TO_CKPT, NUM_CLASSES, LABEL_MAP):
     return dicts, category_index
 
 
-def test_df_accuracy(df, df_pred):
-    pass
+def make_df_with_classes(dicts, category_index, threshold):
+    df = pd.DataFrame(columns=['image_paths', 'detections'])
+
+    for image_dict in dicts:
+        image_path = image_dict[0]
+        scores = image_dict[1]['detection_scores']
+        classes = image_dict[1]['detection_classes']
+
+        keeper_indices = np.argwhere(scores.astype(float) > threshold)
+        keeper_classes_int = classes[keeper_indices].ravel().tolist()
+        keeper_classes = [category_index[x]['name'] for x in keeper_classes_int]
+        df = df.append({'image_paths': image_path, 'detections': keeper_classes}, ignore_index=True, )
+
+    return df
+
+
+def test_df_accuracy(path_to_df, df_pred):
+    test_df = pd.read_csv(path_to_df)
+    test_df['filepath'] = 'image_annotations/' + test_df['FileName']
+    comparison_df = test_df.join(df_pred)
 
 
 if __name__ == '__main__':
     dicts, category_index = make_dicts(PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
          NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt')
-    df = make_df_with_classes(dicts, category_index, 0.9)
 
+    df = make_df_with_classes(dicts, category_index, 0.9)
+    test_df_accuracy('test_csv/kb_photos.csv', df)
     # if you want to print your images out...
     # for image_path in TEST_IMAGE_PATHS:
     #     print_image(image_path, (12,8), detection_graph, category_index)

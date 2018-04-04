@@ -22,7 +22,7 @@ This will utilize a Convolutional Neural Net. There are 3 main object detection 
  - SSD
  - Faster R-CNN
  
-Although YOLO is considerably faster than Faster R-CNN, it is less accurate. Interstingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN (1), YOLO is 100X faster than Fast R-CNN (2). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performances poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
+Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interstingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN (1), YOLO is 100X faster than Fast R-CNN (2). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
 
 ![](http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png)
 (3)

@@ -73,8 +73,8 @@ def df_split(xml_df, test_size):
 
 
 def concate_save_dfs(path, test_df, train_df):
-    if 'train.csv' in os.listdir('GalvanizeMax_ImageSet') \
-    and 'test.csv' in os.listdir('GalvanizeMax_ImageSet'):
+    if 'train.csv' in os.listdir('image_annotations') \
+    and 'test.csv' in os.listdir('image_annotations'):
         existing_test = pd.read_csv(os.path.join(path,'test.csv'))
         existing_train = pd.read_csv(os.path.join(path,'train.csv'))
         new_test_df = pd.concat([existing_test, test_df])
@@ -105,13 +105,14 @@ def main(path, path_to_obj_dec):
     for directory in os.listdir(path):
         folder_path = os.path.join(path, directory)
         xml_df = xml_to_df(folder_path, class_label, directory)
-        test_df, train_df = df_split(xml_df, 0.2)
-        new_test_df, new_train_df = concate_save_dfs(os.path.dirname(path), test_df, train_df)
+        if len(xml_df) > 0:
+            test_df, train_df = df_split(xml_df, 0.2)
+            new_test_df, new_train_df = concate_save_dfs(os.path.dirname(path), test_df, train_df)
     return new_test_df, new_train_df
 
 
 if __name__ == "__main__":
-    new_test_df, new_train_df = main('GalvanizeMax_ImageSet/annotationsXML', 'object-detection.pbtxt')
+    new_test_df, new_train_df = main('image_annotations/annotations', 'object-detection.pbtxt')
 
 
 

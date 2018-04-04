@@ -244,7 +244,7 @@ if __name__ == '__main__':
 
     precision, best_threshold, keeper_df = compare_thresholds(dicts,
                                                     category_index,
-                                                    'test_csv/kb_photos.csv',
+                                                    'test_csv_file/kb_photos.csv',
                                                     range(0,1,10))
 
     # if you want to print your images out...

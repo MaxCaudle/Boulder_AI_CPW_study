@@ -2,11 +2,11 @@
 Usage:
   # From tensorflow/models/
   # Create train data:
-  python generate_tfrecord.py --csv_input=/Users/maxcaudle/projects/capstone/tensorflow/GalvanizeMax_ImageSet/train.csv  --output_path=train.record
+  python generate_tfrecord.py --csv_input=image_annotations/train.csv --output_path=train.record
   # Create test data:
-  python generate_tfrecord.py --csv_input=/Users/maxcaudle/projects/capstone/tensorflow/GalvanizeMax_ImageSet/test.csv  --output_path=test.record
+  python generate_tfrecord.py --csv_input=image_annotations/test.csv --output_path=test.record
 
-  python /Users/maxcaudle/projects/capstone_backup/tensorflow_things/models/research/object_detection/train.py --logtostderr --train_dir=training/ --pipeline_config_path=ssd_mobilenet_v1_pets.config
+  python models/research/object_detection/train.py --logtostderr --train_dir=training/ --pipeline_config_path=ssd_mobilenet_v1_pets.config
 """
 from __future__ import division
 from __future__ import print_function

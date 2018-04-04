@@ -4,6 +4,7 @@ Colorado Parks and Wildlife performed rehabiliation on wet meadows in the Gunnis
 
 CPW manually counted the instaces of different animals in all 316,635 photos. This project, partnered with Boulder AI, aims to create a model that can detect, classify, and record the counts of different animals in the CPW study. The goal is to create a product that will benefit the CPW study, and any other studies like it - based on Boulder AI's unique hardware and software offerings. 
 
+
 #### NEED: A resource saving model for the CPW Gunnison Basin project.
 
 ## The Project

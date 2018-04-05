@@ -15,11 +15,15 @@ import xml.etree.ElementTree as ET
 
 def make_class_label(path):
     class_label = {}
-    for i, folder in enumerate(os.listdir(path), 1):
+    i = 1
+    for folder in os.listdir(path):
         backslash = '/' if path[-1] != '/' else ''
         first_file = os.listdir(path + backslash + folder)[0]
         image_net_id = first_file.split('_')[0]
-        class_label[image_net_id] = [folder, i]
+        pardir = os.path.dirname(path)
+        if os.path.isdir(os.path.join(pardir, 'images', image_net_id)):
+            class_label[image_net_id] = [folder, i]
+            i+=1
     new_dict = {}
     for key, value in class_label.items():
         new_dict[value[0]] = [key, value[1]]
@@ -52,7 +56,7 @@ def extract_from_member(member, path, directory, root, class_label):
         value = (os.path.join(img_path, this_file_path), #filename
                  int(root.find('size')[0].text), #width
                  int(root.find('size')[1].text), #height
-                 class_label[member[0].text][1], # class
+                 class_label[member.find('name').text][1], # class
                  int(member.find('bndbox')[0].text), # xmin
                  int(member.find('bndbox')[1].text), # ymin
                  int(member.find('bndbox')[2].text), # xmax
@@ -79,12 +83,14 @@ def concate_save_dfs(path, test_df, train_df):
         existing_train = pd.read_csv(os.path.join(path,'train.csv'))
         new_test_df = pd.concat([existing_test, test_df])
         new_train_df = pd.concat([existing_train, train_df])
+        print(existing_test[existing_test['class'] > 29])
     else:
         new_test_df = test_df
         new_train_df = train_df
     new_test_df.to_csv(path+'/test.csv', index = None)
     #shuffle the code with df.sample(frac=1) frac returns the full df
     new_train_df.sample(frac=1).to_csv(path+'/train.csv', index = None)
+
     return new_test_df, new_train_df
 
 def make_object_detection_map(class_label, path_to_obj_dec):
@@ -99,6 +105,7 @@ def make_object_detection_map(class_label, path_to_obj_dec):
     with open(path_to_obj_dec, 'w') as write_file:
         write_file.write(strings)
 
+
 def main(path, path_to_obj_dec):
     class_label = make_class_label(path)
     make_object_detection_map(class_label, path_to_obj_dec)
@@ -108,11 +115,11 @@ def main(path, path_to_obj_dec):
         if len(xml_df) > 0:
             test_df, train_df = df_split(xml_df, 0.2)
             new_test_df, new_train_df = concate_save_dfs(os.path.dirname(path), test_df, train_df)
-    return new_test_df, new_train_df
+    return new_test_df, new_train_df, class_label
 
 
 if __name__ == "__main__":
-    new_test_df, new_train_df = main('image_annotations/annotations', 'object-detection.pbtxt')
+    new_test_df, new_train_df, class_label = main('image_annotations/annotations', 'object-detection.pbtxt')
 
 
 

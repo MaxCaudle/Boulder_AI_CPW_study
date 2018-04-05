@@ -24,7 +24,7 @@ import pickle
 
 from collections import defaultdict
 from io import StringIO
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from PIL import Image
 
 from models.research.object_detection.utils import ops as utils_ops
@@ -172,6 +172,7 @@ def make_df_with_classes(dicts, category_index, threshold):
     df = pd.DataFrame(columns=['image_path', 'detections'])
 
     for image_dict in dicts:
+
         image_path = image_dict[0]
         scores = image_dict[1]['detection_scores']
         classes = image_dict[1]['detection_classes']
@@ -194,6 +195,7 @@ def make_matrix(path_to_df, df_pred):
     comparison_df = test_df.join(df_pred.set_index('image_path'),
                                  on='image_path')
     comparison_df.dropna(inplace = True)
+    print(comparison_df)
     comparison_df['tp'] = comparison_df.apply(lambda row:
                                               int(row.CommonName in
                                                   row.detections),
@@ -227,7 +229,9 @@ def compare_thresholds(dicts, category_index, path_to_df, range_object):
     keeper_df = None
 
     for threshold in range_object:
+        print('THRESHOLD: ', threshold, '\n\n')
         df = make_df_with_classes(dicts, category_index, threshold)
+        print('df: \n', df)
         comparison_df = make_matrix(path_to_df, df)
         this_precision = make_precesion(comparison_df)
         if this_precision > precision:
@@ -238,10 +242,9 @@ def compare_thresholds(dicts, category_index, path_to_df, range_object):
     return precision, best_threshold, keeper_df
 
 if __name__ == '__main__':
-    dicts, category_index = make_dicts(test_images='image_annotations/images/',
-                   PATH_TO_CKPT='inference_graph/frozen_inference_graph.pb',
-         NUM_CLASSES=5, LABEL_MAP='object-detection.pbtxt', new_dict=False)
-
+    dicts, category_index = make_dicts(test_images='test_images/',
+                   PATH_TO_CKPT='inference_graph_faster/frozen_inference_graph.pb',
+         NUM_CLASSES=25, LABEL_MAP='object-detection.pbtxt', new_dict=True)
     precision, best_threshold, keeper_df = compare_thresholds(dicts,
                                                     category_index,
                                                     'test_csv_file/kb_photos.csv',

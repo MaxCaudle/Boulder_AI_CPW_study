@@ -21,6 +21,7 @@ import tarfile
 import tensorflow as tf
 import zipfile
 import pickle
+import csv
 
 from collections import defaultdict
 from io import StringIO
@@ -186,16 +187,27 @@ def make_df_with_classes(dicts, category_index, threshold):
 
 
 def make_matrix(path_to_df, df_pred):
+    my_dict = {}
+    with open('id_name.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            my_dict[row[1]] = row[0]
+
     test_df = pd.read_csv(path_to_df)
     test_df = test_df[test_df['CommonName'] != 'Setup'][test_df['ObsID'] == 2][['FileName', 'CommonName']]
     test_df['CommonName'] = test_df['CommonName'].str.lower()
-    test_df['CommonName'].replace(['none', 'false trigger'], ['none','none'], inplace = True)
-    test_df['image_path'] = 'image_annotations/images/' + test_df['FileName']
+    test_df['CommonName'].replace(['none', 'false trigger', 'setup',
+                                   'timelapse', 'unknown', 'check', 'no flash'],
+                                  [np.nan, np.nan, np.nan, np.nan,
+                                   np.nan, np.nan, np.nan,], inplace = True)
+    test_df.dropna(inplace = True)
+    test_df['CommonName'].replace(my_dict, inplace = True)
+    test_df['image_path'] = 'test_images/' + test_df['FileName']
 
     comparison_df = test_df.join(df_pred.set_index('image_path'),
                                  on='image_path')
     comparison_df.dropna(inplace = True)
-    print(comparison_df)
+
     comparison_df['tp'] = comparison_df.apply(lambda row:
                                               int(row.CommonName in
                                                   row.detections),
@@ -212,15 +224,14 @@ def make_matrix(path_to_df, df_pred):
                                                (row.CommonName != 'none')),
                                               axis=1)
     comparison_df['tn'] = comparison_df.apply(lambda row:
-                                             int((row.CommonName == 'none')
-                                              & len(row.detections)==0), axis=1)
+                                             int(len(row.detections)==0) & (row['CommonName'] == 'none'), axis=1)
     return comparison_df
 
 
 def make_precesion(comparison_df):
     TP = sum(comparison_df['tp'])
     FP = sum(comparison_df['fp'])
-    return TP / (TP + FP)
+    return TP/(TP + FP)
 
 
 def compare_thresholds(dicts, category_index, path_to_df, range_object):
@@ -231,24 +242,24 @@ def compare_thresholds(dicts, category_index, path_to_df, range_object):
     for threshold in range_object:
         print('THRESHOLD: ', threshold, '\n\n')
         df = make_df_with_classes(dicts, category_index, threshold)
-        print('df: \n', df)
         comparison_df = make_matrix(path_to_df, df)
+        print(comparison_df)
         this_precision = make_precesion(comparison_df)
         if this_precision > precision:
             best_threshold = threshold
             precision = this_precision
             keeper_df = comparison_df
-
+            print('new best', this_precision, best_threshold)
     return precision, best_threshold, keeper_df
 
 if __name__ == '__main__':
     dicts, category_index = make_dicts(test_images='test_images/',
                    PATH_TO_CKPT='inference_graph_faster/frozen_inference_graph.pb',
-         NUM_CLASSES=25, LABEL_MAP='object-detection.pbtxt', new_dict=True)
+         NUM_CLASSES=25, LABEL_MAP='object-detection.pbtxt', new_dict=False)
     precision, best_threshold, keeper_df = compare_thresholds(dicts,
                                                     category_index,
                                                     'test_csv_file/kb_photos.csv',
-                                                    range(0,1,10))
+                                                    np.arange(0,1,.1))
 
     # if you want to print your images out...
     # for image_path in TEST_IMAGE_PATHS:

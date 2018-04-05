@@ -53,10 +53,14 @@ def extract_from_member(member, path, directory, root, class_label):
     if not os.path.isfile(this_file_location):
         value = False
     else:
+        label = member.find('name').text
+        if label[0] != 'n':
+            print(label)
+            label = 'n02084071'
         value = (os.path.join(img_path, this_file_path), #filename
                  int(root.find('size')[0].text), #width
                  int(root.find('size')[1].text), #height
-                 class_label[member.find('name').text][1], # class
+                 class_label[label][1], # class
                  int(member.find('bndbox')[0].text), # xmin
                  int(member.find('bndbox')[1].text), # ymin
                  int(member.find('bndbox')[2].text), # xmax
@@ -83,7 +87,6 @@ def concate_save_dfs(path, test_df, train_df):
         existing_train = pd.read_csv(os.path.join(path,'train.csv'))
         new_test_df = pd.concat([existing_test, test_df])
         new_train_df = pd.concat([existing_train, train_df])
-        print(existing_test[existing_test['class'] > 29])
     else:
         new_test_df = test_df
         new_train_df = train_df

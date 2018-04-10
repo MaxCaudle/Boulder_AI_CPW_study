@@ -15,18 +15,16 @@ import xml.etree.ElementTree as ET
 
 def make_class_label(path):
     class_label = {}
-    i = 1
+    i=1
     for folder in os.listdir(path):
+        if folder == '.DS_Store':
+            continue
         backslash = '/' if path[-1] != '/' else ''
         first_file = os.listdir(path + backslash + folder)[0]
         image_net_id = first_file.split('_')[0]
-        pardir = os.path.dirname(path)
-        if os.path.isdir(os.path.join(pardir, 'images', image_net_id)):
-            class_label[image_net_id] = [folder, i]
-            i+=1
+        class_label[folder] = i
+        i+=1
     new_dict = {}
-    for key, value in class_label.items():
-        new_dict[value[0]] = [key, value[1]]
     class_label.update(new_dict)
     return class_label
 
@@ -60,7 +58,7 @@ def extract_from_member(member, path, directory, root, class_label):
         value = (os.path.join(img_path, this_file_path), #filename
                  int(root.find('size')[0].text), #width
                  int(root.find('size')[1].text), #height
-                 class_label[label][1], # class
+                 class_label[label], # class
                  int(member.find('bndbox')[0].text), # xmin
                  int(member.find('bndbox')[1].text), # ymin
                  int(member.find('bndbox')[2].text), # xmax
@@ -98,12 +96,12 @@ def concate_save_dfs(path, test_df, train_df):
 
 def make_object_detection_map(class_label, path_to_obj_dec):
     strings = ''
-    for value in class_label.values():
+    for key, value in class_label.items():
         string = \
         '''item {{
         \r        id: {}
         \r        name: '{}'
-        \r      }}\n\n'''.format(value[1], value[0])
+        \r      }}\n\n'''.format(value, key)
         strings += string
     with open(path_to_obj_dec, 'w') as write_file:
         write_file.write(strings)

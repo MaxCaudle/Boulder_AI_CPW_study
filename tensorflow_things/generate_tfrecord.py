@@ -2,9 +2,9 @@
 Usage:
   # From tensorflow/models/
   # Create train data:
-  python generate_tfrecord.py --csv_input=image_annotations/train.csv --output_path=train.record
+  python generate_tfrecord.py --csv_input=image_annotations/train.csv --output_path=train2.record
   # Create test data:
-  python generate_tfrecord.py --csv_input=image_annotations/test.csv --output_path=test.record
+  python generate_tfrecord.py --csv_input=image_annotations/test.csv --output_path=test2.record
 
   # FROM models/research
   export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
@@ -12,7 +12,7 @@ Usage:
   # SSD
   python models/research/object_detection/train.py --logtostderr --train_dir=training/ --pipeline_config_path=ssd_mobilenet_v1_pets.config
   # faster R-CNN
-  python models/research/object_detection/train.py --logtostderr --train_dir=training_faster/ --pipeline_config_path=faster_rcnn_inception_resnet_v2_atrous_coco.config
+  python models/research/object_detection/train.py --logtostderr --train_dir=training_faster_smaller_lr_1_3/ --pipeline_config_path=faster_rcnn_inception_resnet_v2_atrous_coco.config
 """
 from __future__ import division
 from __future__ import print_function

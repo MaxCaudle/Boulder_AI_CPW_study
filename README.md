@@ -12,10 +12,9 @@ BoulderAI provided the image sets from the CPW study, training images, and assoc
 
 This project serves two purposes: replicate the CPW Gunnison Basin Project with ML algorithims and show Boulder AI's potential value add.
 
-This project's success will be scored on three goals:
+This project's success will be scored on two goals:
 1) Accurately replicate the CPW human counted results
 2) The project's expandability and robustness
-3) Demonstrated additional value add Boulder AI's hardware will make possible
 
 ## Models to consider
 
@@ -49,6 +48,10 @@ After training for a few days the model still can't get the animals categorizati
 ## Results
 
 The model is good at detecting animals (a precision of 83% on a test set of the CPW photos). 
+
+## Repo guide
+
+There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition 
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Wildlife Photo Identification Model
 
-Colorado Parks and Wildlife performed rehabilitation on wet meadows in the Gunnison Basin, starting in 2011. Wildlife motion-activated cameras were deployed in 4 treatment sites and 2 control sites. The aim of the study was to determine the success of these rehabilitated sites.
+Colorado Parks and Wildlife performed rehabilitation on wet meadows in the Gunnison Basin, starting in 2011. Wildlife motion-activated cameras were deployed in 4 treatment sites and 2 control sites. The aim of the study was to determine the success of these rehabilitated sites.[1](#sources)
 
 CPW manually counted the instances of different animals in all 316,635 photos. This project, partnered with Boulder AI, aims to create a model that can detect, classify, and record the counts of different animals in the CPW study. The goal is to create a product that will benefit the CPW study, and any other studies like it - based on Boulder AI's unique hardware and software offerings.
 
@@ -58,11 +58,11 @@ The model is good at detecting animals (a precision of 83% on a test set of the 
 
 ## Repo guide
 
-There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition [1]
+There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition 
 
 ## Sources
 
-[1](#1-link)
+
 1) http://cv-tricks.com/object-detection/faster-r-cnn-yolo-ssd/
 2) https://pjreddie.com/darknet/yolo/
 3) http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png

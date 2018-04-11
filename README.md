@@ -46,6 +46,10 @@ My model quickly learned where to draw bounding boxes, but after a day of traini
 
 After training for a few days the model still can't get the animals categorization correct. I think this is because the animals are similair in apperance, and a shortage of training data. 
 
+## Results
+
+The model is good at detecting animals (a precision of 83% on a test set of the CPW photos). 
+
 ## Sources
 
 1) http://cv-tricks.com/object-detection/faster-r-cnn-yolo-ssd/

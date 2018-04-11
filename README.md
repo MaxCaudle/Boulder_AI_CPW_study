@@ -37,7 +37,7 @@ The training data consists of pictures, with bounding boxes and labels. I will h
 
 Here is a test image:
 
-
+![undetected image](https://github.com/MasonCaiby/Boulder_AI_CPW_study/blob/master/eda/SPP-1-H-02_012410.JPG)
 
 ## The model
 
@@ -55,6 +55,10 @@ With more time I could get the model to also classify the animals it detects.
 ## Results
 
 The model is good at detecting animals (a precision of 83% on a test set of the CPW photos). Here is the same image from the data section with it's predicted bounding box:
+
+![detected_image](https://github.com/MasonCaiby/Boulder_AI_CPW_study/blob/master/eda/detected.png)
+
+As you can see, it drew a bounding box on a small portion of a cow (in this example, just the head).
 
 ## Repo guide
 

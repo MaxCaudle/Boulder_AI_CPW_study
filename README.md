@@ -58,10 +58,11 @@ The model is good at detecting animals (a precision of 83% on a test set of the 
 
 ## Repo guide
 
-There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition 
+There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition (#1-link)
 
 ## Sources
 
+[1](#1-link)
 1) http://cv-tricks.com/object-detection/faster-r-cnn-yolo-ssd/
 2) https://pjreddie.com/darknet/yolo/
 3) http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png

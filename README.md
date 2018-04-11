@@ -12,48 +12,100 @@ BoulderAI provided the image sets from the CPW study, training images, and assoc
 
 This project serves two purposes: replicate the CPW Gunnison Basin Project with ML algorithims and show Boulder AI's potential value add.
 
-This project's success will be scored on three goals:
+This project's success will be scored on two goals:
 1) Accurately replicate the CPW human counted results
-2) The project's expandability and robustness
-3) Demonstrated additional value add Boulder AI's hardware will make possible
+2) The project's scalability and robustness
 
-## Models to consider
+## Models
 
-This will utilize a Convolutional Neural Net. There are 3 main object detection / classification algorithms currently en vogue. In increasing accuracy they are:
+This models utilizes a Region of Interest Pooling Convolutional Neural Net. There are 3 main object detection / classification algorithms currently en vogue. In increasing accuracy they are:
  - YOLO
  - SSD
  - Faster R-CNN
 
-Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN (1), YOLO is 100X faster than Fast R-CNN (2). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
+Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN [(1)](#sources), YOLO is 100X faster than Fast R-CNN [(2)](#sources). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
 
-![](http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png)
-(3)
+![Comapre Object Detection Networks](http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png)
+[(3)](#sources)
 
 The data contains images of small animals, (e.g. birds). I will start with Faster R-CNN and an SSD algorithm.
 
 ## Data
 
 The test data consists of photos (some color, some B&W) with labels in a few different places (a few .csv's, and a few .accb's).
-The training data consists of pictures, with bounding boxes and labels. I will have to pipe the training photos through a TFR Record File formatter for it to work with the TensorFlow API
+The training data consists of pictures, with bounding boxes and labels. I will have to pipe the training photos through a TFR Record File formatter for it to work with the TensorFlow API. 
+
+Here is a test image:
+
+
 
 ## The model
 
-I am using the TensorFlow API Object detection framework (https://github.com/tensorflow/models/tree/master/research/object_detection). A fair amount of pipelining is required to get the data streamed through to the API in the format it needs. I built my pipeline out so any images could go into a training folder and any images could go into the true test set (read: not validation). This will make it easier for future projects to be quickly built out.
+I am using the [TensorFlow API Object detection framework](https://github.com/tensorflow/models/tree/master/research/object_detection). A fair amount of pipelining is required to get the data streamed through to the API in the format it needs. I built my pipeline out so any images could go into a training folder and any images could go into the true test set (read: not validation). This will make it easier for future projects to be quickly built out.
 
-To train a new model on data:
-
-1) Add training images and annotations (in separate directories, annotations and images) to a training_data directory inside the tensorflow_things directory.
-2) Run XML_to_csv. Your training images can be in sub directories of the training_data/annotations and training_data/images or as one. The labels can be in either the XML file associated with each picture, or the label of the folder. Though, the structure for the annotations and images must be the same (training_data/annotations/dog/file.xml is fine as long as the associated picture is in training_data/images/dog/image.jpeg)
-3) Copy and paste the lines of code from the run_model.txt file there will be 4.
-4) Monitor your model's progress through tensorboard (link here)
-5) Stop the model when your are happy with its loss (typically shooting for loss < 1.0)
-6) Run test_pipe.py (see commands in run_the_test.txt) This requires your test images to be in the test_data directory. It returns a df of the predictions (optionally in a comparison data frame for comparison with known values), the precision of the optimized threshold, and saves the dataframe to a .csv file
-
-Other options:
-You can get a print out of your images also from the test_pipe.py script.
+The crux of this project seems to be the tight time constraint, I ended up having a week with the training data. My model quickly learned where to draw bounding boxes. Here is a zoomed out view of the models architecture:
 
 
+R-CNN's have two moduels: a deep, fully connected network for region proposal and a Fast R-CNN detector, that uses the preposed regions. The first module, also called an RPN (region proposal network) outputs rectangular proposals and an objectness score. It works by sliding a network (nxn window == k) over a convolutional map after every convolution layer. This network is then fed into a lower dimensional feature and then into 2 sibling layers (reg and cls).
+
+The reg layer propososes 4 * k outputs, the bounding box coordinates. The cls layer puts out 2 * k outputs, the objectness of the proposed boxes. 
+
+With more time I could get the model to also classify the animals it detects.
+
+## Results
+
+The model is good at detecting animals (a precision of 83% on a test set of the CPW photos). Here is the same image from the data section with it's predicted bounding box:
+
+## Repo guide
+
+There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better code descrition in the web_app and tensorflow_things directories. 
+```
+- README.md
+- schedule.md
+- upload_s3.md
+- tensorflowthings
+  |- GalvanizeMax_ImageSet
+    |- test.csv
+    |- train.csv
+  |- test_csv_file
+    |- kb_photos.csv
+  |- detected_dicts.pkl
+  |- faster_rcnn_inception_resnet_v2_atrous_coco.config
+  |- generate_tfrecord.py
+  |- id_name.csv
+  |- object-detection.pbtxt
+  |- ssd_mobilenet_v1_pets.config
+  |- test_pipe.py
+  |- test_pipe_aws.py
+  |- xml_to_csv.py
+- eda
+  |- eda.py
+  |- plots
+    |- kb_df.png
+    |- linx_hist.png
+  |- data
+    |- kb_photos.csv
+    |- kb_readme.docx
+    |- linx_data.csv
+- web_app
+  |- app.py
+  |- make_image.py
+  |- make_model.py
+  |- static
+    |- css
+      |- bootstrap.min.css
+      |- docs.min.css
+      |- main.css
+    |- img
+      |- border.jpeg
+    |- detected_img
+  |- templates
+    |- index.html
+    |- predict.html
+    |- upload.html
+```
 ## Sources
+
 
 1) http://cv-tricks.com/object-detection/faster-r-cnn-yolo-ssd/
 2) https://pjreddie.com/darknet/yolo/

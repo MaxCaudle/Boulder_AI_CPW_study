@@ -1,6 +1,6 @@
 # Wildlife Photo Identification Model
 
-Colorado Parks and Wildlife performed rehabilitation on wet meadows in the Gunnison Basin, starting in 2011. Wildlife motion-activated cameras were deployed in 4 treatment sites and 2 control sites. The aim of the study was to determine the success of these rehabilitated sites.[1](#sources)
+Colorado Parks and Wildlife performed rehabilitation on wet meadows in the Gunnison Basin, starting in 2011. Wildlife motion-activated cameras were deployed in 4 treatment sites and 2 control sites. The aim of the study was to determine the success of these rehabilitated sites.
 
 CPW manually counted the instances of different animals in all 316,635 photos. This project, partnered with Boulder AI, aims to create a model that can detect, classify, and record the counts of different animals in the CPW study. The goal is to create a product that will benefit the CPW study, and any other studies like it - based on Boulder AI's unique hardware and software offerings.
 
@@ -23,10 +23,10 @@ This models utilizes a Region of Interest Pooling Convolutional Neural Net. Ther
  - SSD
  - Faster R-CNN
 
-Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN (1), YOLO is 100X faster than Fast R-CNN (2). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
+Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN [1](#sources), YOLO is 100X faster than Fast R-CNN [2](#sources). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
 
 ![Comapre Object Detection Networks](http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png)
-(3)
+[3](#sources)
 
 The data contains images of small animals, (e.g. birds). I will start with Faster R-CNN and an SSD algorithm.
 

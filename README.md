@@ -58,7 +58,7 @@ The model is good at detecting animals (a precision of 83% on a test set of the 
 
 ## Repo guide
 
-There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition 
+There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better code descrition in the web_app and tensorflow_things directories. 
 ```
 - README.md
 - schedule.md

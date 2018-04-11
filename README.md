@@ -41,7 +41,7 @@ Here is a test image:
 
 ## The model
 
-I am using the TensorFlow API Object detection framework (https://github.com/tensorflow/models/tree/master/research/object_detection). A fair amount of pipelining is required to get the data streamed through to the API in the format it needs. I built my pipeline out so any images could go into a training folder and any images could go into the true test set (read: not validation). This will make it easier for future projects to be quickly built out.
+I am using the [TensorFlow API Object detection framework](https://github.com/tensorflow/models/tree/master/research/object_detection). A fair amount of pipelining is required to get the data streamed through to the API in the format it needs. I built my pipeline out so any images could go into a training folder and any images could go into the true test set (read: not validation). This will make it easier for future projects to be quickly built out.
 
 The crux of this project seems to be the tight time constraint, I ended up having a week with the training data. My model quickly learned where to draw bounding boxes. Here is a zoomed out view of the models architecture:
 

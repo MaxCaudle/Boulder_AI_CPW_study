@@ -23,10 +23,10 @@ This models utilizes a Region of Interest Pooling Convolutional Neural Net. Ther
  - SSD
  - Faster R-CNN
 
-Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN [1](#sources), YOLO is 100X faster than Fast R-CNN [2](#sources). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
+Although YOLO is considerably quicker than Faster R-CNN, it is less accurate. Interestingly, I had a hard time finding an actual comparison between YOLO and Faster R-CNN. Luckily, math: Faster R-CNN is 10x faster than Fast R-CNN [(1)](#sources), YOLO is 100X faster than Fast R-CNN [(2)](#sources). 100 / 10 = 10; so YOLO is 10 x faster than Faster R-CNN. YOLO performs poorly on small objects, SSD performs adequately on small objects, and Faster R-CNN performs the best.
 
 ![Comapre Object Detection Networks](http://cv-tricks.com/wp-content/uploads/2017/12/Size-wise-comparison-of-various-detectors.png)
-[3](#sources)
+[(3)](#sources)
 
 The data contains images of small animals, (e.g. birds). I will start with Faster R-CNN and an SSD algorithm.
 
@@ -59,7 +59,51 @@ The model is good at detecting animals (a precision of 83% on a test set of the 
 ## Repo guide
 
 There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into each of these directories if you want to run this straight without changing anything. There is a better descrition 
-
+```
+- README.md
+- schedule.md
+- upload_s3.md
+- tensorflowthings
+  |- GalvanizeMax_ImageSet
+    |- test.csv
+    |- train.csv
+  |- test_csv_file
+    |- kb_photos.csv
+  |- detected_dicts.pkl
+  |- faster_rcnn_inception_resnet_v2_atrous_coco.config
+  |- generate_tfrecord.py
+  |- id_name.csv
+  |- object-detection.pbtxt
+  |- ssd_mobilenet_v1_pets.config
+  |- test_pipe.py
+  |- test_pipe_aws.py
+  |- xml_to_csv.py
+- eda
+  |- eda.py
+  |- plots
+    |- kb_df.png
+    |- linx_hist.png
+  |- data
+    |- kb_photos.csv
+    |- kb_readme.docx
+    |- linx_data.csv
+- web_app
+  |- app.py
+  |- make_image.py
+  |- make_model.py
+  |- static
+    |- css
+      |- bootstrap.min.css
+      |- docs.min.css
+      |- main.css
+    |- img
+      |- border.jpeg
+    |- detected_img
+  |- templates
+    |- index.html
+    |- predict.html
+    |- upload.html
+```
 ## Sources
 
 

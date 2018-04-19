@@ -14,6 +14,19 @@ import xml.etree.ElementTree as ET
 
 
 def make_class_label(path):
+    ''' DOCSTRING
+        This will make a dictionary for the different class labels. It's ok. You
+        just give it a path to the a folder containing different folders and it
+        loops through them and makes a dictionary of them and a class number.
+        -------------
+        INPUTS
+        path: the sys_path to the folder that contains the xml files. Mine was
+              organized so that different folders contained different classes.
+              The different files also started with a class identifier
+        --------------
+        RETURNS
+        class_label: a dictionary of the class label and class id number
+    '''
     class_label = {}
     i=1
     for folder in os.listdir(path):
@@ -30,6 +43,18 @@ def make_class_label(path):
 
 
 def xml_to_df(path, class_label, directory):
+    ''' DOCSTRING
+        This converts all xml files in a path to dataframe that will eventually
+        become saved to a csv. It also makes sure that the image actually exists
+        ------------
+        INPUTS
+        path: path to xml files
+        class_label: the class_label dictionary
+        directory: the actual folder we are looking in
+        ------------
+        RETURNS
+        xml_df: a dataframe with the info from all the xml files in the directory
+    '''
     xml_list = []
     for xml_file in glob.glob(path + '/*.xml'):
         tree = ET.parse(xml_file)
@@ -44,6 +69,20 @@ def xml_to_df(path, class_label, directory):
 
 
 def extract_from_member(member, path, directory, root, class_label):
+    ''' DOCSTRING
+        This gets the info from a single file in the directory. This is where we
+        check to make sure the image actually exists
+        -----------
+        INPUTS
+        member: the xml file to get info from
+        path: the path to the directory
+        directory: the directory we are looking at
+        root: an xml.etree.ElementTree object
+        class_label: the dictionary with the class labels
+        ----------
+        RETURNS
+        value: the row to append to the df for the folder
+    '''
     img_path = os.path.dirname(os.path.dirname(path))+'/images/'+directory+'/'
     this_file_path = root.find('filename').text.split('.')[0]
     this_file_path = this_file_path + '.JPEG'
@@ -67,18 +106,46 @@ def extract_from_member(member, path, directory, root, class_label):
     return value
 
 
-def df_split(xml_df, test_size):
+def df_split(xml_df, test_size=0.2):
+    ''' DOCSTRING
+        This function splits the dataframe into a train and test group, it also
+        shuffles the data points. We call this for every directory to make sure
+        the classes are adequately represented in the test and train dfs
+        ------------
+        INPUTS:
+        xml_df: the df to split
+        test_size: ratio of test/all points, defaults to 20%  of the set
+        -----------
+        RETURNS
+        test_df: the test df of xml info
+        train_df: the train df of xml info
+    '''
     observations = len(xml_df)
     test_indices = np.random.choice(observations,
                                     round(observations * test_size),
                                     replace = False)
     train_indicies = np.isin(np.arange(observations), test_indices, invert = True)
-    test_df = xml_df.iloc[test_indices]
-    train_df = xml_df.iloc[train_indicies]
+    test_df = xml_df.iloc[test_indices].sample(frac=1)
+    train_df = xml_df.iloc[train_indicies].sample(frac=1)
     return test_df, train_df
 
 
 def concate_save_dfs(path, test_df, train_df):
+    ''' DOCSTRING
+        This concates all the dfs and saves them. I do this iteratively to make
+        sure the different classes are represented in both test and train dfs
+        ----------
+        INPUTS
+        path: the path to the test and train csv files. the file names are
+              hardcoded because youre not allowed to name your csvs something
+              dumb
+        test_df: the test dataframe
+        train_df: the training dataframe
+        ---------
+        RETURNS
+        new_test_df: the newly concatenated test df
+        new_train_df: the newly concatenated train df
+    '''
     if 'train.csv' in os.listdir('image_annotations') \
     and 'test.csv' in os.listdir('image_annotations'):
         existing_test = pd.read_csv(os.path.join(path,'test.csv'))
@@ -95,6 +162,17 @@ def concate_save_dfs(path, test_df, train_df):
     return new_test_df, new_train_df
 
 def make_object_detection_map(class_label, path_to_obj_dec):
+    ''' DOCSTRING
+        This makes a detection map that is used later on when you actually
+        detect things.
+        ---------
+        INPUTS:
+        class_label: the class label dictionary made earlier in this script
+        path_to_obj_dec: where you want to save this
+        ---------
+        RETURNS:
+        NONE
+    '''
     strings = ''
     for key, value in class_label.items():
         string = \
@@ -108,6 +186,18 @@ def make_object_detection_map(class_label, path_to_obj_dec):
 
 
 def main(path, path_to_obj_dec):
+    ''' DOCSTRING
+        This just runs the whoooooooole script.
+        ----------
+        INPUTS:
+        path: the path to the folder containing folders of xml files
+        path_to_obj_dec: where you want to save the object-detection file
+        ----------
+        RETURNS:
+        new_test_df: a test_df
+        new_train_df: a train_df
+        class_label: a class_label dictionary
+    '''
     class_label = make_class_label(path)
     make_object_detection_map(class_label, path_to_obj_dec)
     for directory in os.listdir(path):

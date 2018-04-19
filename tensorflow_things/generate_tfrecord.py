@@ -1,4 +1,6 @@
 """
+This is fully pulled from Tensorflow.
+
 Usage:
   # From tensorflow/models/
   # Create train data:

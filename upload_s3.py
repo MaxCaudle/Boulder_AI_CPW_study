@@ -89,7 +89,7 @@ def load_things(name, bucket_name, filepath, connection):
 
 def make_connection(accesskey, secretkey):
     ''' DOCSTRING
-        This makes a connection, again not many line of code, but it does help
+        This makes a connection, again not many lines of code, but it does help
         make it easier to see where to put things. I mainly use this if I am
         uploading to s3 on a different computer than my own and have to
         manually enter my creds.
@@ -103,7 +103,9 @@ def make_connection(accesskey, secretkey):
     '''
 
     boto3_connection = boto3.resource('s3')
-    s3_client = boto3.client('s3', accesskey, secretkey)
+    s3_client = boto3.client('s3',
+                             aws_access_key_id=accesskey,
+                             aws_secret_access_key=secretkey)
 
     return s3_client
 

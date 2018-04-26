@@ -1,4 +1,4 @@
-#Directory Guide: tensorflow_things
+# Directory Guide: tensorflow_things
 
 This directory is for training and running the model, I moved some scripts from tensorflow's models/... repo. I did this so I could call them a little easier, but mainly because I changed them a little, and wanted to be able to save those changes to git. To use this:
 

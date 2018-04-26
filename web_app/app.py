@@ -31,14 +31,14 @@ def predict(filename = False):
     """
     if filename:
         filename = 'static/img/' + filename
-        display_image, keepers_list, tot_time, cat_time, np_time, inf_time = make_image(filename, graph)
+        display_image, tot_time = make_image(filename, graph)
+        tot_time = "Total load time:" +str(tot_time)
     else:
-        display_image = 'static/img/Beagle-1.jpg'
-        tot_time, cat_time, np_time, inf_time = 'saved','saved','saved','saved'
-        keepers_list = None
+        display_image = 'static/detected_img/three_dogs_detected.png'
+        tot_time = ''
+    print(display_image)
     return render_template('predict.html', user_image=display_image,
-                            tot_time=tot_time,
-                            keep_list=keepers_list
+                            tot_time=tot_time
                             )
 
 

@@ -19,7 +19,7 @@ from tensorflow_things.models.research.object_detection.utils import visualizati
 def make_model():
     print('making model')
     # What model to download.
-    MODEL_NAME = '../tensorflow_things/inference_graph_faster'
+    MODEL_NAME = '../tensorflow_things/inference_graph_faster_small_lr_2_31313'
     # MODEL_FILE = MODEL_NAME + '.tar.gz'
     # DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
 

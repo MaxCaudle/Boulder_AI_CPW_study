@@ -47,17 +47,19 @@ model {
     e. line 139: ```label_map_path: "PATH_TO_BE_CONFIGURED/mscoco_label_map.pbtxt"``` to```label_map_path: "object-detection.pbtxt"```
 
 10. You should now be good to run your train your model with this line:
-    ```python models/research/object_detection/train.py --logtostderr --train_dir=training_faster_smaller_lr_1_3/ --pipeline_config_path=faster_rcnn_inception_resnet_v2_atrous_coco.config```
+    ```
+    python models/research/object_detection/train.py --logtostderr --train_dir=training_faster_smaller_lr_1_3/ --pipeline_config_path=faster_rcnn_inception_resnet_v2_atrous_coco.config
+    ```
     change the train_dir to your desired directory, and the pipeline_config_path to the path to your altered config file
     
 11. Sweet. Model trained. Now export the model to a proto:
-  ```
+```
   python object_detection/export_inference_graph.py \
     --input_type image_tensor \
     --pipeline_config_path ${PIPELINE_CONFIG_PATH} \
     --trained_checkpoint_prefix ${TRAIN_PATH} \
-    --output_directory output_inference_graph.pb```
-    
-    change the pipeline_config_path, trained_checkpoint_prefic and output_directory as needed.
+    --output_directory output_inference_graph.pb
+```
+change the pipeline_config_path, trained_checkpoint_prefic and output_directory as needed.
     
 12. You can now use either the ```object_detection_tutorial.ipynb``` or ```test_pipe_aws.py``` file to test your images.

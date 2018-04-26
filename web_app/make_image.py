@@ -122,7 +122,7 @@ def make_image(image_path, detection_graph):
   keepers_list = [(output_dict['detection_classes'][good_score],
                    output_dict['detection_scores'][good_score])
                    for good_score in good_scores]
-  return save_path, keepers_list, tic - toc, cat_time, np_time, inf_time
+  return save_path, keepers_list
 
 if __name__ == "__main__":
     graph = make_model()

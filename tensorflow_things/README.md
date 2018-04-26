@@ -60,6 +60,6 @@ model {
     --trained_checkpoint_prefix ${TRAIN_PATH} \
     --output_directory output_inference_graph.pb
 ```
-change the pipeline_config_path, trained_checkpoint_prefic and output_directory as needed.
+    change the pipeline_config_path, trained_checkpoint_prefic and output_directory as needed.
     
 12. You can now use either the ```object_detection_tutorial.ipynb``` or ```test_pipe_aws.py``` file to test your images.

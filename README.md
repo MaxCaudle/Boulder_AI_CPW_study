@@ -1,4 +1,4 @@
-# Wildlife Photo Identification Model
+# Fauna-ing Over Object Detection
 
 Colorado Parks and Wildlife performed rehabilitation on wet meadows in the Gunnison Basin, starting in 2011. Wildlife motion-activated cameras were deployed in 4 treatment sites and 2 control sites. The aim of the study was to determine the success of these rehabilitated sites.
 

@@ -54,7 +54,7 @@ model {
     
 11. Sweet. Model trained. Now export the model to a proto:
 ```
-  python object_detection/export_inference_graph.py \
+  python3 object_detection/export_inference_graph.py \
     --input_type image_tensor \
     --pipeline_config_path ${PIPELINE_CONFIG_PATH} \
     --trained_checkpoint_prefix ${TRAIN_PATH} \

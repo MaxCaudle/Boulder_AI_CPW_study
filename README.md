@@ -63,6 +63,9 @@ As you can see, it drew a bounding box on a small portion of a cow (in this exam
 ## Repo guide
 
 There are 2 main directories, the tensorflow_things directory that makes a model and a web_app directory that runs the webapp. You'll need to put the tensorflow/models directory into the tensorflow_things directory if you want to run this straight without changing anything. There is a better code descrition in the web_app and tensorflow_things directories. 
+
+I have now added a Jupyter Notebook that will walk you through making everything work in the tensorflow_things directory. Clone it to start detecting objects!
+
 ```
 - README.md
 - schedule.md
